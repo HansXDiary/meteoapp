@@ -18,11 +18,10 @@ export default function App() {
 
   const API_KEY = "48848bd829cd089812c87e85f85f44e7";
 
+  // Ne lance la géolocalisation qu'une fois au montage
   useEffect(() => {
-    if (!query) {
-      getCurrentLocation();
-    }
-  }, [query]);
+    getCurrentLocation();
+  }, []);
 
   const getCurrentLocation = async () => {
     try {
@@ -66,7 +65,8 @@ export default function App() {
       );
       setWeather(res.data);
       fetchForecastCity(query);
-      setQuery("");
+      // Option : ne pas vider le champ pour que l'utilisateur voit la ville recherchée
+      // setQuery("");
     } catch (err) {
       console.error("Ville non trouvée:", err);
       alert("Ville non trouvée. Veuillez réessayer.");
@@ -106,10 +106,14 @@ export default function App() {
               className="border border-gray-300 rounded-xl px-4 py-2 text-sm w-full md:w-60 focus:outline-none focus:ring-2 focus:ring-blue-400"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") fetchWeatherCity();
+              }}
             />
             <button
               onClick={fetchWeatherCity}
               className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600"
+              aria-label="Rechercher"
             >
               <FaSearch />
             </button>
